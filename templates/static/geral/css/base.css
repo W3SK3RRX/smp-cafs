@@ -1,0 +1,6 @@
+body {
+    background-image: url('/static/geral/img/bg.jpg');
+    background-size: cover; /* faz a imagem de fundo cobrir toda a área do elemento pai */
+    background-repeat: no-repeat; /* impede que a imagem de fundo seja repetida */
+    background-attachment: fixed;
+}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block body %}
+
+{% include "cabecalho.html" %}
+
+<section class="container pt-5 mt-5">
+    
+    <div class="row justify-content-center">
+        <div class="col-sm-4 mb-3 mb-sm-0">
+            <div class="card">
+                <div class="col-md d-flex justify-content-center">
+                    <div class="card-body">
+                        
+                        <form method="POST" action="{% url 'editar_funcionario' funcionario.id_funcionario %}">
+                            {% csrf_token %}
+                            {% if messages %}
+                                <br>
+                                {% for message in messages %}
+                                    <section class="alert {{ message.tags }}">
+                                        {{ message }}
+                                    </section>
+                                {% endfor %}
+                            {% endif %}
+                        
+                            {{ form.as_p }}
+                        
+                            <button type="submit" class="btn btn-primary">Salvar</button>
+                        </form>
+                        
+                        
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+
+{% endblock %}

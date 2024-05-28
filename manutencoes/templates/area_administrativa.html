@@ -1,0 +1,399 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block body %}
+
+{% include "cabecalho.html" %}
+
+<section class="container pt-5 mt-5">
+
+    <div class="row">
+        <div class="col-sm-12 mb-3 mb-sm-0">
+            <div class="card">
+
+                <h3>SMP-CAFS</h3>
+
+                <div class="row display-flex justify-content-center">
+
+                    <!--<div class="col-sm-6 display-flex start">
+                        <h3>Example heading <span class="badge text-bg-secondary">New</span></h3>
+
+                    </div>-->
+
+                    <div class="col-sm-2 display-flex end">
+                        <form method="GET">
+                            <label for="ano" class="form-label">Ano:</label>
+                            <select class="form-select m-2" name="ano" id="ano">
+                                {% for year in anos %}
+                                    <option value="{{ year }}" {% if year == selected_year %} selected {% endif %}>{{ year }}</option>
+                                {% endfor %}
+                            </select>
+                    
+                            <label for="mes" class="form-label">Mês:</label>
+                            <select class="form-select m-2" name="mes" id="mes">
+                                <option value="" {% if not selected_month %} selected {% endif %}>Todos</option>
+                                <option value="1" {% if selected_month == '1' %} selected {% endif %}>Janeiro</option>
+                                <option value="2" {% if selected_month == '2' %} selected {% endif %}>Fevereiro</option>
+                                <option value="3" {% if selected_month == '3' %} selected {% endif %}>Março</option>
+                                <option value="4" {% if selected_month == '4' %} selected {% endif %}>Abril</option>
+                                <option value="5" {% if selected_month == '5' %} selected {% endif %}>Maio</option>
+                                <option value="6" {% if selected_month == '6' %} selected {% endif %}>Junho</option>
+                                <option value="7" {% if selected_month == '7' %} selected {% endif %}>Julho</option>
+                                <option value="8" {% if selected_month == '8' %} selected {% endif %}>Agosto</option>
+                                <option value="9" {% if selected_month == '9' %} selected {% endif %}>Setembro</option>
+                                <option value="10" {% if selected_month == '10' %} selected {% endif %}>Outubro</option>
+                                <option value="11" {% if selected_month == '11' %} selected {% endif %}>Novembro</option>
+                                <option value="12" {% if selected_month == '12' %} selected {% endif %}>Dezembro</option>
+                            </select>
+                                    
+                            <button class="btn btn-dark" type=submit>Filtrar</button>
+                        </form>
+                    </div>
+
+                </div>
+               
+
+                <div class="row display-flex justify-content-center">
+                    <div class="card text-bg-primary mb-3 m-2" style="max-width: 18rem;">
+                        <div class="card-header">Abertas</div>
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                {% for status_count in status_counts %}
+                                    {% if status_count.status == 'Aberta' %}
+                                        {{ status_count.count }}
+                                    {% endif %}
+                                {% endfor %}
+                            </h5>
+                        </div>
+                    </div>
+                                      
+                    <div class="card text-bg-danger mb-3 m-2" style="max-width: 18rem;">
+                        <div class="card-header">Em espera</div>
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                {% for status_count in status_counts %}
+                                    {% if status_count.status == 'Em espera' %}
+                                        {{ status_count.count }}
+                                    {% endif %}
+                                {% endfor %}
+                            </h5>
+                        </div>
+                    </div>
+                            
+                    <div class="card text-bg-secondary mb-3 m-2" style="max-width: 18rem;">
+                        <div class="card-header">Arquivadas</div>
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                {% for status_count in status_counts %}
+                                    {% if status_count.status == 'Arquivada' %}
+                                        {{ status_count.count }}
+                                    {% endif %}
+                                {% endfor %}
+                            </h5>
+                        </div>
+                    </div>
+                            
+                    <div class="card text-bg-success mb-3 m-2" style="max-width: 18rem;">
+                        <div class="card-header">Concluídas</div>
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                {% for status_count in status_counts %}
+                                    {% if status_count.status == 'Concluída' %}
+                                        {{ status_count.count }}
+                                    {% endif %}
+                                {% endfor %}
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="row display-flex justify-content-center">
+                    <div class="card mb-3 m-2" style="max-width: 25rem;">
+                        <div class="card-header">Gráfico geral de demandas</div>
+                        <div class="card-body">
+                            <canvas id="qtddemandas"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-3 m-2" style="max-width: 25rem;">
+                        <div class="card-header">Gráfico de demandas por setor</div>
+                        <div class="card-body">
+                            <canvas id="demandaspst"></canvas>
+                        </div>
+                    </div>
+                
+                    <script>
+                        // Preparar dados para o gráfico geral de demandas
+                        const statusData = {
+                            'Aberta': 0,
+                            'Em espera': 0,
+                            'Arquivada': 0,
+                            'Concluída': 0
+                        };
+                
+                        {% for status_count in status_counts %}
+                            statusData['{{ status_count.status }}'] = {{ status_count.count }};
+                        {% endfor %}
+                
+                        const ctx = document.getElementById('qtddemandas');
+                        new Chart(ctx, {
+                            type: 'pie',
+                            data: {
+                                labels: ['Abertas', 'Em espera', 'Arquivadas', 'Concluídas'],
+                                datasets: [{
+                                    label: 'Ordens de serviço',
+                                    data: Object.values(statusData),
+                                    backgroundColor: ['RGB(255, 99, 71)', 'RGB(65, 105, 225)', 'RGB(255, 215, 0)', 'RGB(50, 205, 50)'],
+                                    borderWidth: 1
+                                }]
+                            },
+                        });
+                
+                        // Gráfico de demandas por setor
+                        const ctx1 = document.getElementById('demandaspst');
+                        new Chart(ctx1, {
+                            type: 'pie',
+                            data: {
+                                labels: [
+                                    {% for setor_count in setor_counts %}
+                                        '{{ setor_count.setor__nome_setor }}',
+                                    {% endfor %}
+                                ],
+                                datasets: [{
+                                    label: 'Ordens de serviço',
+                                    data: [
+                                        {% for setor_count in setor_counts %}
+                                            {{ setor_count.count }},
+                                        {% endfor %}
+                                    ],
+                                    backgroundColor: ['RGB(255, 99, 71)', 'RGB(65, 105, 225)', 'RGB(255, 215, 0)', 'RGB(50, 205, 50)', 'RGB(50, 150, 200)'],
+                                    borderWidth: 1
+                                }]
+                            },
+                        });
+                    </script>
+                </div>                
+
+                <div class="row display-flex justify-content-center">
+                    <div class="card mb-3 m-2" style="max-width: 51rem;">
+                        <div class="card-header">Ordens de serviço por setor ao longo dos meses</div>
+                        <div class="card-body">
+                            <canvas id="ordem_servico_meses_setor"></canvas>
+                        </div>
+                    </div>
+                
+                    <script>
+                       const ctx3 = document.getElementById('ordem_servico_meses_setor').getContext('2d');
+                
+                        const setorData = {
+                            labels: [
+                                'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+                                'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+                            ],
+                            datasets: [
+                                {% for setor, dados_setor in setor_data.items %}
+                                    {
+                                        label: '{{ setor }}',
+                                        data: {{ dados_setor }},
+                                        fill: false,
+                                        borderColor: ['RGB(255, 99, 71)', 'RGB(65, 105, 225)', 'RGB(255, 215, 0)', 'RGB(50, 205, 50)', 'RGB(50, 150, 200)'],
+                                        tension: 0.1
+                                    },
+                                {% endfor %}
+                            ]
+                        };
+                
+                        new Chart(ctx3, {
+                            type: 'line',
+                            data: setorData
+                        });
+            
+                    </script>
+                </div>
+                
+                
+                <div class="row display-flex justify-content-center">
+                    <div class="card mb-3 m-2" style="max-width: 51rem;">
+                        <div class="card-header">Ordens de serviço ao longo dos meses</div>
+                        <div class="card-body">
+                            <canvas id="ordem_servico_meses"></canvas>
+                        </div>
+                    </div>
+                
+                    <script>
+                        const ctx4 = document.getElementById('ordem_servico_meses');
+                    
+                        new Chart(ctx4, {
+                            type: 'line',
+                            data: {
+                                labels: [
+                                    'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+                                    'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+                                ],
+                    
+                                datasets: [
+                                    {
+                                        label: 'Ordens de serviço',
+                                        data:  {{ ordens_meses | safe }},
+                                        fill: false,
+                                        borderColor: 'rgb(75, 192, 192)',
+                                        tension: 0.1
+                                    }
+                                ]
+                            },
+                        });
+                    </script>
+                </div>
+                
+            
+            </div>
+            
+        </div>
+    </div>
+    
+    <br>
+    
+    <div class="row mb-4">
+        <div class="col-sm-6 mb-3 mb-sm-0">
+
+            <div class="card">
+
+                <h4 class="m-2">Setores cadastrados</h4>
+
+                <div class="text-start m-2">
+                    
+                    <a href="{% url 'cadastrar_setor' %}"><button type="button" class="btn btn-primary">Cadastrar setor</button></a>
+                </div>
+                
+
+                <div class="table-responsive">
+                
+                    <table class="table text-center table-bordered table-hover custom-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Nome</th>
+                                <th scope="col">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for setor in setor_list %}
+                            <tr>
+                                <td>{{ setor.nome_setor }}</td>
+                                <td>
+                                    <a href="{% url 'editar_setor' setor.id_setor %}" class="link-dark"><i class="fa-solid fa-pen-to-square"></i></a>
+                                    
+                                    <i class="fa-solid fa-trash" data-bs-toggle="modal" data-bs-target="#deletar{{ setor.id_setor }}"></i>
+                                </td>
+                            </tr>
+
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="deletar{{ setor.id_setor }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="aaa">Excluir setor</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Tem certeza que deseja excluir o setor '{{ setor.nome_setor }}'?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+
+                                            <form method="post" action="{% url 'deletar_setor' setor.id_setor %}">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-danger">Deletar</button>
+                                            </form>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            {% endfor %}
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+    
+        </div>
+    
+        <div class="col-sm-6">
+
+            <div class="card">
+
+                <h4 class="m-2">Funcionários cadastrados</h4>
+
+                <div class="text-start m-2">
+                    <a href="{% url 'cadastrar_funcionario' %}"><button type="button" class="btn btn-primary">Cadastrar funcionário</button></a>
+
+                </div>
+
+
+                <div class="table-responsive">
+                    <table class="table text-center table-bordered table-hover custom-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Nome</th>
+                                <th scope="col">Setor</th>
+                                <th scope="col">Telefone</th>
+                                <th scope="col">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for funcionario in funcionarios_list %}
+                                <tr>
+                                    <td>{{ funcionario.nome_funcionario }}</td>
+                                    <td>{{ funcionario.setor }}</td>
+                                    <td>{{ funcionario.telefone_funcionario }}</td>
+                                    <td>
+                                        <a href="{% url 'editar_funcionario' funcionario.id_funcionario %}" class="link-dark"><i class="fa-solid fa-pen-to-square"></i></a>
+                                        <i class="fa-solid fa-trash" data-bs-toggle="modal" data-bs-target="#deletarfuncionario{{ funcionario.id_funcionario }}"></i>
+                                    </td>
+                                </tr>
+
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="deletarfuncionario{{ funcionario.id_funcionario }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="aaa">Excluir funcionário</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Tem certeza que deseja excluir o funcionário '{{ funcionario.nome_funcionario }}'?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+
+                                                <form method="post" action="{% url 'deletar_funcionario' funcionario.id_funcionario %}">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-danger">Deletar</button>
+                                                </form>
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    
+
+</section>
+
+
+
+{% endblock %}

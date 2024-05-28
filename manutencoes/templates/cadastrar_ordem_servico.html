@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block body %}
+
+{% include "cabecalho.html" %}
+
+<section class="container pt-5 mt-5">
+    
+    <div class="row justify-content-center">
+        <div class="col-sm-4 mb-3 mb-sm-0">
+            <div class="card">
+                <div class="col-md d-flex justify-content-center">
+                    <div class="card-body">
+                        
+                        <form method="POST" action="{% url 'cadastrar_ordem_servico' %}">
+
+                            {% if messages %}
+                                <br>
+                                {% for message in messages %}
+                                    <section class="alert {{message.tags}}">
+                                        {{message}}
+                                    </section>
+                                {% endfor %}
+                            {% endif %}
+
+                            {% csrf_token %}
+
+                            <h4>Cadastrar Ordem de serviço</h4>
+
+                            <div class="mb-3 pt-2">
+                                <label for="setor" class="form-label">Setor:</label>
+                                <select class="form-select" id="setor" name="setor" required>
+                                    <option value="" disabled selected>Selecione o setor</option>
+                                    {% for setor in setor_list %}
+                                        <option value="{{ setor.id_setor }}">{{ setor.nome_setor }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="descricao" class="form-label">Descrição:</label>
+                                <textarea type="textarea" class="form-control" id="descricao" name="descricao" rows="2" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="solicitante" class="form-label">Solicitante:</label>
+                                <input type="text" class="form-control" id="solicitante" name="solicitante" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="observacoes" class="form-label">Observações:</label>
+                                <textarea type="text" class="form-control" id="observacoes" name="observacoes" rows="3"></textarea>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-dark">Cadastrar</button>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+
+{% endblock %}

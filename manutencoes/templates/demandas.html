@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block body %}
+
+{% include "cabecalho.html" %}
+
+<!-- Aqui vai o conteúdo específico desta página -->
+<section class="container pt-5 mt-5">
+    <div class="card w-80">
+        <div class="card-body">
+            <div>
+                <h1 class="card-title">{{ setor.nome_setor }}</h1>
+            </div>
+
+            <div>
+                <div class="row display-flex justify-content-center">
+                    <div class="col-sm-2 display-flex end">
+                        <form method="GET">
+                            <label for="ano" class="form-label">Ano:</label>
+                            <select class="form-select m-2" name="ano" id="ano">
+                                {% for year in anos %}
+                                    <option value="{{ year }}" {% if year == selected_year %} selected {% endif %}>{{ year }}</option>
+                                {% endfor %}
+                            </select>
+
+                            <label for="mes" class="form-label">Mês:</label>
+                            <select class="form-select m-2" name="mes" id="mes">
+                                <option value=""  {% if not selected_month %} selected {% endif %}>Todos</option>
+                                <option value="1" {% if selected_month == '1' %} selected {% endif %}>Janeiro</option>
+                                <option value="2" {% if selected_month == '2' %} selected {% endif %}>Fevereiro</option>
+                                <option value="3" {% if selected_month == '3' %} selected {% endif %}>Março</option>
+                                <option value="4" {% if selected_month == '4' %} selected {% endif %}>Abril</option>
+                                <option value="5" {% if selected_month == '5' %} selected {% endif %}>Maio</option>
+                                <option value="6" {% if selected_month == '6' %} selected {% endif %}>Junho</option>
+                                <option value="7" {% if selected_month == '7' %} selected {% endif %}>Julho</option>
+                                <option value="8" {% if selected_month == '8' %} selected {% endif %}>Agosto</option>
+                                <option value="9" {% if selected_month == '9' %} selected {% endif %}>Setembro</option>
+                                <option value="10"{% if selected_month == '10' %} selected {% endif %}>Outubro</option>
+                                <option value="11"{% if selected_month == '11' %} selected {% endif %}>Novembro</option>
+                                <option value="12"{% if selected_month == '12' %} selected {% endif %}>Dezembro</option>
+                            </select>
+
+                            <button class="btn btn-secondary" type="submit">Filtrar</button>
+                        </form>
+                    </div>
+
+                </div>
+
+                <div class="text-start p-3">
+                    <a href="{% url 'cadastrar_ordem_servico' %}"><button class="btn btn-dark text-uppercase">Cadastrar</button></a>
+                </div>
+
+                
+                <div class="row display-flex justify-content-center">
+                    <div class="card text-bg-primary mb-3 m-2" style="max-width: 18rem;">
+                        <div class="card-header">Abertas</div>
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                {% for status_count in status_counts %}
+                                    {% if status_count.status == 'Aberta' %}
+                                        {{ status_count.count }}
+                                    {% endif %}
+                                {% endfor %}
+                            </h5>
+                        </div>
+                    </div>
+
+                    <div class="card text-bg-danger mb-3 m-2" style="max-width: 18rem;">
+                        <div class="card-header">Em espera</div>
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                {% for status_count in status_counts %}
+                                    {% if status_count.status == 'Em espera' %}
+                                        {{ status_count.count }}
+                                    {% endif %}
+                                {% endfor %}
+                            </h5>
+                        </div>
+                    </div>
+
+                    <div class="card text-bg-secondary mb-3 m-2" style="max-width: 18rem;">
+                        <div class="card-header">Arquivadas</div>
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                {% for status_count in status_counts %}
+                                    {% if status_count.status == 'Arquivada' %}
+                                        {{ status_count.count }}
+                                    {% endif %}
+                                {% endfor %}
+                            </h5>
+                        </div>
+                    </div>
+
+                    <div class="card text-bg-success mb-3 m-2" style="max-width: 18rem;">
+                        <div class="card-header">Concluídas</div>
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                {% for status_count in status_counts %}
+                                    {% if status_count.status == 'Concluída' %}
+                                        {{ status_count.count }}
+                                    {% endif %}
+                                {% endfor %}
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row display-flex justify-content-center pt-2">
+                    <div class="table-responsive mb-4">
+                        <table class="table text-center table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col">N° ordem de serviço</th>
+                                    <th scope="col">Setor</th>
+                                    <th scope="col">Data de entrada</th>
+                                    <th scope="col">Data de saída</th>
+                                    <th scope="col">Descrição</th>
+                                    <th scope="col">Solicitante</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for os in os_list %}
+                                    <tr class="{% if os.status == 'Aberta' %}table-primary{% elif os.status == 'Em espera' %}table-danger{% elif os.status == 'Arquivada' %}table-secondary{% elif os.status == 'Concluída' %}table-success{% endif %}">
+                                        <td>{{ os.numero_ordem_servico }}</td>
+                                        <td>{{ os.setor.nome_setor }}</td>
+                                        <td>{{ os.data_entrada|date:'d/m/Y' }}</td>
+                                        <td>{{ os.data_conclusao|date:'d/m/Y' }}</td>
+                                        <td>{{ os.descricao }}</td>
+                                        <td>{{ os.solicitante }}</td>
+                                        <td>{{ os.status }}</td>
+                                        <td>
+                                            <a href="#" class="link-dark"><i class="fa-solid fa-eye"></i></a>
+                                            
+                                            <div class="modal fade" id="exampleModal{{ os.id_ordem_servico }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Ordem de serviço</h1>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>Teste</p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <a href="#" class="link-dark"><i class="fa-solid fa-pen-to-square"></i></a>
+                                            <i class="fa-solid fa-trash"></i>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+{% endblock %}
