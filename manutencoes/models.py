@@ -30,6 +30,7 @@ class OrdemServico(models.Model):
     id_ordem_servico = models.BigAutoField(primary_key=True)
     numero_ordem_servico = models.CharField(max_length=50, unique=True, blank=True)
     setor = models.ForeignKey(Setor, on_delete=models.DO_NOTHING)
+    funcionario = models.ForeignKey(Funcionario, on_delete=models.DO_NOTHING, default=1)  # Supondo que o ID 1 de `Funcionario` exista e seja um valor válido
     data_entrada = models.DateField(default=timezone.now)
     data_conclusao = models.DateField(null=True, blank=True)
     descricao = models.CharField(max_length=400, null=False)
@@ -48,3 +49,4 @@ class OrdemServico(models.Model):
 
     def __str__(self):
         return f"{self.numero_ordem_servico} - {self.data_entrada}"
+

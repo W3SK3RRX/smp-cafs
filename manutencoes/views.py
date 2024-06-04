@@ -7,7 +7,7 @@ from django.db.models.functions import ExtractMonth, ExtractYear
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.utils import timezone
-from .forms import FuncionarioForm
+from .forms import FuncionarioForm, OsForm
 
 
 # Create your views here.
@@ -123,7 +123,7 @@ def cadastrar_funcionario(request):
         else:
             messages.add_message(request, constants.ERROR, "Por favor, preencha todos os campos!")
             return HttpResponseRedirect(reverse('cadastrar_funcionario'))
-         
+
 
 def editar_funcionario(request, id_funcionario):
     funcionario = get_object_or_404(Funcionario, pk=id_funcionario)
@@ -198,6 +198,32 @@ def cadastrar_ordem_servico(request):
         nova_ordem_servico.save()
         
         messages.success(request, 'Ordem de serviço cadastrada com sucesso!')
-        return redirect('demandas')
+        return redirect('demandas', id_setor=setor_id)  # Passar o id_setor no redirecionamento
     return render(request, "cadastrar_ordem_servico.html", {'setor_list': setor_list})
+
+
+
+def ordem_servico(request, id_ordem_servico):
+    os = get_object_or_404(OrdemServico, pk=id_ordem_servico)
+    if request.method == "GET":
+        return render(request, "ordem_servico.html", {'os':os})
+    
+
+def editar_ordem_servico(request, id_ordem_servico):
+    os = get_object_or_404(OrdemServico, pk=id_ordem_servico)
+    if request.method == "POST":
+        form = OsForm(request.POST, instance=os)
+        if form.is_valid():
+            form.save()
+            return redirect('ordem_servico', id_ordem_servico)
+        else:
+            messages.add_message(request, constants.ERROR, "Todos os campos são obrigatórios.")
+    else:
+        form = OsForm(instance=os)
+
+    context = {
+        'form': form,
+        'os': os,
+    }
+    return render(request, 'editar_ordem_servico.html', context)
 

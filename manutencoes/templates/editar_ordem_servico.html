@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block body %}
+
+{% include "cabecalho.html" %}
+
+<section class="container pt-5 mt-5">
+    <div class="row justify-content-center">
+        <div class="col-sm-8 mb-4 mb-sm-0">
+            <div class="card mb-4">
+                <div class="col-md d-flex justify-content-center">
+                    <div class="card-body">
+                        <h4>Editar ordem de serviço</h4>
+
+                        {{ os.numero_ordem_servico }}
+
+                        <form method="POST" action="{% url 'editar_ordem_servico' os.id_ordem_servico %}">
+                            {% csrf_token %}
+                            {% if messages %}
+                                <br>
+                                {% for message in messages %}
+                                    <section class="alert {{ message.tags }}">
+                                        {{ message }}
+                                    </section>
+                                {% endfor %}
+                            {% endif %}
+
+                            <div class="form-group">
+                                <label for="id_setor">Setor:</label>
+                                {{ form.setor }}
+                            </div>
+                            <div class="form-group">
+                                <label for="id_funcionario">Funcionário:</label>
+                                {{ form.funcionario }}
+                            </div>
+                            <div class="form-group">
+                                <label for="id_data_entrada">Data de Entrada:</label>
+                                {{ form.data_entrada }}
+                            </div>
+                            <div class="form-group">
+                                <label for="id_data_conclusao">Data de Conclusão:</label>
+                                {{ form.data_conclusao }}
+                            </div>
+                            <div class="form-group">
+                                <label for="id_descricao">Descrição:</label>
+                                {{ form.descricao }}
+                            </div>
+                            <div class="form-group">
+                                <label for="id_solicitante">Solicitante:</label>
+                                {{ form.solicitante }}
+                            </div>
+                            <div class="form-group">
+                                <label for="id_status">Status:</label>
+                                {{ form.status }}
+                            </div>
+                            <div class="form-group">
+                                <label for="id_observacoes">Observações:</label>
+                                {{ form.observacoes }}
+                            </div>
+                            <br>
+
+                            <button type="submit" class="btn btn-dark">Salvar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+{% endblock %}

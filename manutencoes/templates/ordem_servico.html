@@ -7,21 +7,61 @@
 {% include "cabecalho.html" %}
 
 <section class="container pt-5 mt-5">
-    
     <div class="row justify-content-center">
-        <div class="col-sm-4 mb-3 mb-sm-0">
+        <div class="col-sm-12 mb-3 mb-sm-0">
+
             <div class="card">
-                <div class="col-md d-flex justify-content-center">
+                <div class="col-md d-flex">
                     <div class="card-body">
-                        
-                        
-                        
+                        <img src="/static/geral/img/logo.png" class="" style="max-height: 80px; max-width: auto;">
+                        <div class="row display-flex justify-content-center">
+                            <p class="text-center">MINISTÉRIO DA EDUCAÇÃO<br>
+                                UNIVERSIDADE FEDERAL DO PIAUÍ<br>
+                                CAMPUS AMÍLCAR FERREIRA SOBRAL - CAFS<br>
+                                COORDENAÇÃO ADMINISTRATIVA FINANCEIRA - CAF
+                            </p>
+                        </div>
+                        <br>
+                        <div class="row display-flex justify-content-center">
+                            <h3>{{ os.numero_ordem_servico }}</h3>
+                        </div>
+                        <br>
+                        <div class="row display-flex justify-content-start">
+                            <p><b>Setor:</b> {{os.setor.nome_setor}}</p>
+                        </div>
+                        <div class="row display-flex justify-content-center">
+                            <div class="col-sm-4">
+                                <p><b>Data de entrada:</b> {{os.data_entrada|date:'d/m/Y'}}</p>
+                            </div>
+                            <div class="col-sm-4">
+                                <p><b>Data de saída:</b> {{os.data_conclusao|date:'d/m/Y'}}</p>
+                            </div>                            
+                        </div>
+                        <div class="row display-flex justify-content-center">
+                            <p><b>Responsável pela solicitação:</b> {{os.solicitante}}</p>
+                        </div>
+                        <div class="row display-flex justify-content-center">
+                            <p><b>Responsável pela execução:</b> {{os.funcionario.nome_funcionario}}</p>
+                        </div>
+                        <div class="row display-flex justify-content-center">
+                            <p><b>Descrição do serviço</b></p>
+                            <p>{{os.descricao}}</p>
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <div class="row pt-2">
+                <div class="col-2">
+                    <a href=""><button class="btn btn-dark">Download <i class="fa-solid fa-download"></i></button></a>
+                </div>
+                <div class="col-2">
+                    <a href="{% url 'editar_ordem_servico' os.id_ordem_servico %}" class="link-dark"><button class="btn btn-dark">Editar <i class="fa-solid fa-pen-to-square"></i></button></a>
+                </div>
+            </div>
+
         </div>
     </div>
-
 </section>
 
 

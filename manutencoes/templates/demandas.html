@@ -132,26 +132,8 @@
                                         <td>{{ os.solicitante }}</td>
                                         <td>{{ os.status }}</td>
                                         <td>
-                                            <a href="#" class="link-dark"><i class="fa-solid fa-eye"></i></a>
-                                            
-                                            <div class="modal fade" id="exampleModal{{ os.id_ordem_servico }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                <div class="modal-dialog modal-dialog-centered">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Ordem de serviço</h1>
-                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <p>Teste</p>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <a href="#" class="link-dark"><i class="fa-solid fa-pen-to-square"></i></a>
+                                            <a href="{% url 'ordem_servico' os.id_ordem_servico %}" class="link-dark"><i class="fa-solid fa-eye"></i></a>
+                                            <a href="{% url 'editar_ordem_servico' os.id_ordem_servico %}" class="link-dark"><i class="fa-solid fa-pen-to-square"></i></a>
                                             <i class="fa-solid fa-trash"></i>
                                         </td>
                                     </tr>
