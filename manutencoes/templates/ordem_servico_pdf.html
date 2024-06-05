@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ordem de Serviço</title>
+    <style>
+        /* Adicione seus estilos aqui */
+    </style>
+</head>
+<body>
+    <img src="/static/geral/img/logo.png" style="max-height: 80px; max-width: auto;">
+    <div style="text-align: center;">
+        <p>MINISTÉRIO DA EDUCAÇÃO<br>
+            UNIVERSIDADE FEDERAL DO PIAUÍ<br>
+            CAMPUS AMÍLCAR FERREIRA SOBRAL - CAFS<br>
+            COORDENAÇÃO ADMINISTRATIVA FINANCEIRA - CAF
+        </p>
+        <h3>{{ os.numero_ordem_servico }}</h3>
+    </div>
+    <p><b>Setor:</b> {{ os.setor.nome_setor }}</p>
+    <p><b>Data de entrada:</b> {{ os.data_entrada|date:'d/m/Y' }}</p>
+    <p><b>Data de saída:</b> {{ os.data_conclusao|date:'d/m/Y' }}</p>
+    <p><b>Responsável pela solicitação:</b> {{ os.solicitante }}</p>
+    <p><b>Responsável pela execução:</b> {{ os.funcionario.nome_funcionario }}</p>
+    <p><b>Descrição do serviço:</b> {{ os.descricao }}</p>
+</body>
+</html>

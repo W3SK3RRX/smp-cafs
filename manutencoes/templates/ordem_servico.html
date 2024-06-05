@@ -53,7 +53,7 @@
 
             <div class="row pt-2">
                 <div class="col-2">
-                    <a href=""><button class="btn btn-dark">Download <i class="fa-solid fa-download"></i></button></a>
+                    <a href="{% url 'download_os_pdf' os.id_ordem_servico %}"><button class="btn btn-dark">Download <i class="fa-solid fa-download"></i></button></a>
                 </div>
                 <div class="col-2">
                     <a href="{% url 'editar_ordem_servico' os.id_ordem_servico %}" class="link-dark"><button class="btn btn-dark">Editar <i class="fa-solid fa-pen-to-square"></i></button></a>
