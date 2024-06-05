@@ -133,8 +133,6 @@
                                         <td>{{ os.status }}</td>
                                         <td>
                                             <a href="{% url 'ordem_servico' os.id_ordem_servico %}" class="link-dark"><i class="fa-solid fa-eye"></i></a>
-                                            <a href="{% url 'editar_ordem_servico' os.id_ordem_servico %}" class="link-dark"><i class="fa-solid fa-pen-to-square"></i></a>
-                                            <i class="fa-solid fa-trash"></i>
                                         </td>
                                     </tr>
                                 {% endfor %}
