@@ -8,6 +8,8 @@ from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.utils import timezone
 from .forms import FuncionarioForm, OsForm
+from django.template.loader import render_to_string
+from weasyprint import HTML
 
 
 # Create your views here.
@@ -17,7 +19,7 @@ def home(request):
     if request.method=="GET":
         setor_list = Setor.objects.all()
         return render(request, 'home.html', {'setor_list':setor_list})
-    
+
 
 def area_administrativa(request):
     if request.method == "GET":
@@ -84,7 +86,7 @@ def cadastrar_setor(request):
         else:
             messages.add_message(request, constants.ERROR, "Erro ao cadastrar setor!")
             return redirect('/manutencoes/cadastrar_setor')
-  
+
 
 def editar_setor(request, id_setor):
     setor = get_object_or_404(Setor, pk=id_setor)
@@ -196,18 +198,16 @@ def cadastrar_ordem_servico(request):
             observacoes=observacoes
         )
         nova_ordem_servico.save()
-        
-        messages.success(request, 'Ordem de serviço cadastrada com sucesso!')
+
         return redirect('demandas', id_setor=setor_id)  # Passar o id_setor no redirecionamento
     return render(request, "cadastrar_ordem_servico.html", {'setor_list': setor_list})
-
 
 
 def ordem_servico(request, id_ordem_servico):
     os = get_object_or_404(OrdemServico, pk=id_ordem_servico)
     if request.method == "GET":
         return render(request, "ordem_servico.html", {'os':os})
-    
+
 
 def editar_ordem_servico(request, id_ordem_servico):
     os = get_object_or_404(OrdemServico, pk=id_ordem_servico)
@@ -227,3 +227,25 @@ def editar_ordem_servico(request, id_ordem_servico):
     }
     return render(request, 'editar_ordem_servico.html', context)
 
+
+def download_os_pdf(request, id_ordem_servico):
+    os = OrdemServico.objects.get(id_ordem_servico=id_ordem_servico)
+
+    html_string = render_to_string('ordem_servico_pdf.html', {'os': os})
+    html = HTML(string=html_string)
+
+    # Cria um response como um PDF
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="ordem_servico_{id_ordem_servico}.pdf"'
+
+    # Gera o PDF e escreve no response
+    html.write_pdf(response)
+
+    return response
+
+
+def deletar_os(request, id_ordem_servico):
+    os = get_object_or_404(OrdemServico, id_ordem_servico=id_ordem_servico)
+    id_setor = os.setor.id_setor
+    os.delete()
+    return redirect(f'/manutencoes/demandas/{id_setor}')

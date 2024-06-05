@@ -59,7 +59,7 @@
                     <a href="{% url 'editar_ordem_servico' os.id_ordem_servico %}" class="link-dark">
                         <button class="btn btn-dark me-2">Editar <i class="fa-solid fa-pen-to-square"></i></button>
                     </a>
-                    <a href="#" class="link-dark">
+                    <a href="{% url 'deletar_os' os.id_ordem_servico %}" class="link-dark">
                         <button class="btn btn-danger">Excluir <i class="fa-solid fa-trash"></i></i></button>
                     </a>
                 </div>
