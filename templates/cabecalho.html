@@ -7,16 +7,19 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item">
+                    {% if user_permissions.view_area_administrartiva %}
                     <a class="nav-link link-warning link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="{% url 'area_administrativa' %}">Área administrativa</a>
+                    {% endif %}
+                    
                 </li>
             </ul>
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Usuário
+                        {{user.username}}
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="#">Sair</a></li>
+                        <li><a class="dropdown-item" href="{% url 'sair' %}">Sair</a></li>
                     </ul>
                 </li>
             </ul>

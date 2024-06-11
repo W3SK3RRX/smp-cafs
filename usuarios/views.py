@@ -3,12 +3,14 @@ from django.contrib.auth.models import User
 from django.contrib.messages import constants
 from django.contrib import messages
 from django.contrib import auth
+from manutencoes import views
 import re
 
 # Create your views here.
 
+
 def cadastro(request):
-    if request.method=="GET":
+    if request.method == "GET":
         return render(request, "cadastro.html")
     elif request.method == "POST":
         username = request.POST.get('username')
@@ -16,38 +18,40 @@ def cadastro(request):
         senha = request.POST.get('senha')
         confirmar_senha = request.POST.get('confirmar_senha')
 
-        users = User.objects.filter(username=username)
+        errors = []
 
+        # Verificação de formato de e-mail
+        email_pattern = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+        if not re.match(email_pattern, email):
+            errors.append("Formato de e-mail inválido!")
+
+        users = User.objects.filter(username=username)
         if users.exists():
-            messages.add_message(request, constants.ERROR, "Já existe um usuário com esse nome!")
-            return redirect('/usuarios/cadastro')
+            errors.append("Já existe um usuário com esse nome!")
 
         verifica_email = User.objects.filter(email=email)
-
         if verifica_email.exists():
-            messages.add_message(request, constants.ERROR, "Email já cadastrado!")
-            return redirect('/usuarios/cadastro')
-        
+            errors.append("Email já cadastrado!")
+
         if senha != confirmar_senha:
-            messages.add_message(request, constants.ERROR, "A senha e o confirmar senha devem ser iguais!")
-            return redirect('/usuarios/cadastro')
-        
+            errors.append("A senha e o confirmar senha devem ser iguais!")
+
         if len(senha) < 8:
-            messages.add_message(request, constants.ERROR, "A senha deve conter mais de 8 caracteres!")
-            return redirect('/usuarios/cadastro')
-        
+            errors.append("A senha deve conter mais de 8 caracteres!")
+
         if not re.search(r"[!@#$%^&*()-_=+{};:,<.>]", senha):
-            messages.add_message(request, constants.ERROR, "A senha deve conter pelo menos um caractere especial!")
-            return redirect('/usuarios/cadastro')
-        
+            errors.append("A senha deve conter pelo menos um caractere especial!")
+
         if not re.search(r"\d", senha):
-            messages.add_message(request, constants.ERROR, "A senha deve conter pelo menos um número!")
-            return redirect('/usuarios/cadastro')
-        
+            errors.append("A senha deve conter pelo menos um número!")
+
         if not re.search(r"[A-Z]", senha) or not re.search(r"[a-z]", senha):
-            messages.add_message(request, constants.ERROR, "A senha deve conter pelo menos uma letra maiúscula e uma letra minúscula!")
-            return redirect('/usuarios/cadastro')
-        
+            errors.append("A senha deve conter pelo menos uma letra maiúscula e uma letra minúscula!")
+
+        if errors:
+            for error in errors:
+                messages.add_message(request, constants.ERROR, error)
+            return redirect('cadastro')
 
         try:
             User.objects.create_user(
@@ -55,13 +59,14 @@ def cadastro(request):
                 email=email,
                 password=senha
             )
-            return redirect('/usuarios/login')
-        except:
-            return redirect('/usuarios/cadastro')
+            messages.add_message(request, constants.SUCCESS, "Usuário criado com sucesso! Faça login para continuar.")
+            return redirect('login')
+        except Exception as e:
+            messages.add_message(request, constants.ERROR, f"Ocorreu um erro ao criar o usuário: {e}")
+            return redirect('cadastro')
 
 
-
-def login_view(request):
+def login(request):
     if request.method=="GET":
         return render(request, "login.html")
     elif request.method=="POST":
@@ -75,9 +80,9 @@ def login_view(request):
             return redirect('/manutencoes/home')
         
         messages.add_message(request, constants.ERROR, 'Usuário ou senha incorretos')
-        return redirect('/usuarios/login')
+        return redirect('login')
 
 
 def sair(request):
     auth.logout(request)
-    return redirect('/usuarios/login')
+    return redirect('login')

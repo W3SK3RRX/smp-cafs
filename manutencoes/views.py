@@ -10,17 +10,21 @@ from django.utils import timezone
 from .forms import FuncionarioForm, OsForm
 from django.template.loader import render_to_string
 from weasyprint import HTML
+from usuarios import views
+from django.contrib.auth.decorators import login_required, permission_required
 
 
 # Create your views here.
 
-
+@login_required(login_url="/login/")
 def home(request):
     if request.method=="GET":
         setor_list = Setor.objects.all()
         return render(request, 'home.html', {'setor_list':setor_list})
 
 
+@login_required(login_url="/login/")
+@permission_required('manutencoes.view_area_administrativa', raise_exception=True)
 def area_administrativa(request):
     if request.method == "GET":
         setor_list = Setor.objects.all()
@@ -75,6 +79,7 @@ def area_administrativa(request):
         })
 
 
+@login_required(login_url="/login/")
 def cadastrar_setor(request):
     if request.method == "GET":
         return render(request, "cadastrar_setor.html")
@@ -88,6 +93,7 @@ def cadastrar_setor(request):
             return redirect('/manutencoes/cadastrar_setor')
 
 
+@login_required(login_url="/login/")
 def editar_setor(request, id_setor):
     setor = get_object_or_404(Setor, pk=id_setor)
     
@@ -104,12 +110,14 @@ def editar_setor(request, id_setor):
     return render(request, 'editar_setor.html', {'setor': setor})
 
 
+@login_required(login_url="/login/")
 def deletar_setor(request, id_setor):
     setor = get_object_or_404(Setor, id_setor=id_setor)
     setor.delete()
     return redirect('area_administrativa')
 
 
+@login_required(login_url="/login/")
 def cadastrar_funcionario(request):
     if request.method == "GET":
         setor_list = Setor.objects.all()
@@ -127,6 +135,7 @@ def cadastrar_funcionario(request):
             return HttpResponseRedirect(reverse('cadastrar_funcionario'))
 
 
+@login_required(login_url="/login/")
 def editar_funcionario(request, id_funcionario):
     funcionario = get_object_or_404(Funcionario, pk=id_funcionario)
     if request.method == "POST":
@@ -146,12 +155,14 @@ def editar_funcionario(request, id_funcionario):
     return render(request, 'editar_funcionario.html', context)
 
 
+@login_required(login_url="/login/")
 def deletar_funcionario(request, id_funcionario):
     funcionario = get_object_or_404(Funcionario, id_funcionario=id_funcionario)
     funcionario.delete()
     return redirect('area_administrativa')
 
 
+@login_required(login_url="/login/")
 def demandas(request, id_setor):
     setor = get_object_or_404(Setor, pk=id_setor)
     os_list = OrdemServico.objects.filter(setor=setor)
@@ -181,6 +192,7 @@ def demandas(request, id_setor):
     })
 
 
+@login_required(login_url="/login/")
 def cadastrar_ordem_servico(request):
     setor_list = Setor.objects.all()
     if request.method == "POST":
@@ -203,19 +215,22 @@ def cadastrar_ordem_servico(request):
     return render(request, "cadastrar_ordem_servico.html", {'setor_list': setor_list})
 
 
+@login_required(login_url="/login/")
 def ordem_servico(request, id_ordem_servico):
     os = get_object_or_404(OrdemServico, pk=id_ordem_servico)
     if request.method == "GET":
         return render(request, "ordem_servico.html", {'os':os})
 
 
+@login_required(login_url="/login/")
 def editar_ordem_servico(request, id_ordem_servico):
     os = get_object_or_404(OrdemServico, pk=id_ordem_servico)
+    id_setor = os.setor.id_setor
     if request.method == "POST":
         form = OsForm(request.POST, instance=os)
         if form.is_valid():
             form.save()
-            return redirect('ordem_servico', id_ordem_servico)
+            return redirect(f'/manutencoes/demandas/{id_setor}', id_ordem_servico)
         else:
             messages.add_message(request, constants.ERROR, "Todos os campos são obrigatórios.")
     else:
@@ -228,6 +243,7 @@ def editar_ordem_servico(request, id_ordem_servico):
     return render(request, 'editar_ordem_servico.html', context)
 
 
+@login_required(login_url="/login/")
 def download_os_pdf(request, id_ordem_servico):
     os = OrdemServico.objects.get(id_ordem_servico=id_ordem_servico)
 
@@ -236,7 +252,7 @@ def download_os_pdf(request, id_ordem_servico):
 
     # Cria um response como um PDF
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename="ordem_servico_{id_ordem_servico}.pdf"'
+    response['Content-Disposition'] = f'attachment; filename="ordem_servico_{id_ordem_servico}_{os.data_entrada}.pdf"'
 
     # Gera o PDF e escreve no response
     html.write_pdf(response)
@@ -244,6 +260,7 @@ def download_os_pdf(request, id_ordem_servico):
     return response
 
 
+@login_required(login_url="/login/")
 def deletar_os(request, id_ordem_servico):
     os = get_object_or_404(OrdemServico, id_ordem_servico=id_ordem_servico)
     id_setor = os.setor.id_setor
