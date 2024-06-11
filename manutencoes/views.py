@@ -65,6 +65,10 @@ def area_administrativa(request):
             mes = ordem.data_entrada.month
             setor_data[setor_nome][mes - 1] += 1  # Incrementa a contagem para o mês correspondente
 
+        user_permissions = {
+            'view_area_administrativa': request.user.has_perm('manutencoes.view_area_administrativa')
+        }
+
         return render(request, "area_administrativa.html", {
             'setor_list': setor_list,
             'funcionarios_list': funcionarios_list,
@@ -75,7 +79,8 @@ def area_administrativa(request):
             'anos': anos,
             'selected_year': selected_year,
             'selected_month': selected_month,
-            'setor_data': setor_data  
+            'setor_data': setor_data,
+            'user_permissions':user_permissions
         })
 
 
