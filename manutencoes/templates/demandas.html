@@ -48,7 +48,9 @@
                 </div>
 
                 <div class="text-start p-3">
+                    {% if can_view_cadastrar_ordem_servico %}
                     <a href="{% url 'cadastrar_ordem_servico' %}"><button class="btn btn-dark text-uppercase">Cadastrar</button></a>
+                    {% endif %}
                 </div>
 
                 

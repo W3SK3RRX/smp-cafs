@@ -24,7 +24,6 @@ def home(request):
 
 
 @login_required(login_url="/login/")
-@permission_required('manutencoes.view_area_administrativa', raise_exception=True)
 def area_administrativa(request):
     if request.method == "GET":
         setor_list = Setor.objects.all()
@@ -80,7 +79,6 @@ def area_administrativa(request):
             'selected_year': selected_year,
             'selected_month': selected_month,
             'setor_data': setor_data,
-            'user_permissions':user_permissions
         })
 
 

@@ -56,12 +56,18 @@
                     <a href="{% url 'download_os_pdf' os.id_ordem_servico %}">
                         <button class="btn btn-dark me-2">Download <i class="fa-solid fa-download"></i></button>
                     </a>
+
+                    {% if can_view_editar_ordem_servico %}
                     <a href="{% url 'editar_ordem_servico' os.id_ordem_servico %}" class="link-dark">
                         <button class="btn btn-dark me-2">Editar <i class="fa-solid fa-pen-to-square"></i></button>
                     </a>
+                    {% endif %}
+
+                    {% if can_view_deletar_os %}
                     <a href="{% url 'deletar_os' os.id_ordem_servico %}" class="link-dark">
                         <button class="btn btn-danger">Excluir <i class="fa-solid fa-trash"></i></i></button>
                     </a>
+                    {% endif %}
                 </div>
             </div>            
 
