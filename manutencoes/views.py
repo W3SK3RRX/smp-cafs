@@ -64,10 +64,6 @@ def area_administrativa(request):
             mes = ordem.data_entrada.month
             setor_data[setor_nome][mes - 1] += 1  # Incrementa a contagem para o mês correspondente
 
-        user_permissions = {
-            'view_area_administrativa': request.user.has_perm('manutencoes.view_area_administrativa')
-        }
-
         return render(request, "area_administrativa.html", {
             'setor_list': setor_list,
             'funcionarios_list': funcionarios_list,
@@ -80,6 +76,37 @@ def area_administrativa(request):
             'selected_month': selected_month,
             'setor_data': setor_data,
         })
+
+
+@login_required(login_url="/login/")
+def download_admin_pdf(request):
+    if request.method == "POST":
+        # Receber as imagens em base64
+        geral_chart = request.POST.get('geral_chart')
+        setor_chart = request.POST.get('setor_chart')
+        ordens_setor_chart = request.POST.get('ordens_setor_chart')
+        ordens_mes_chart = request.POST.get('ordens_mes_chart')
+
+        # Renderizar o HTML com os dados para o PDF
+        html_string = render_to_string('area_administrativa_pdf.html', {
+            'geral_chart': geral_chart.split(',')[1],  # Remover a parte do prefixo "data:image/png;base64,"
+            'setor_chart': setor_chart.split(',')[1],
+            'ordens_setor_chart': ordens_setor_chart.split(',')[1],
+            'ordens_mes_chart': ordens_mes_chart.split(',')[1],
+        })
+
+        html = HTML(string=html_string)
+
+        # Cria um response como um PDF
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="area_administrativa_report.pdf"'
+
+        # Gera o PDF e escreve no response
+        html.write_pdf(response)
+
+        return response
+    return HttpResponse("Invalid request method", status=405)
+
 
 
 @login_required(login_url="/login/")

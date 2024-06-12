@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Relatório Administrativo</title>
+    <style>
+        /* Estilos gerais */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+            line-height: 1.5;
+            color: #333;
+        }
+
+        /* Cabeçalho */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #007BFF;
+            padding-bottom: 10px;
+        }
+
+        .header img {
+            max-height: 100px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 12px;
+            color: #555;
+        }
+
+        .header h2 {
+            font-size: 24px;
+            color: #007BFF;
+            margin: 5px 0;
+        }
+
+        /* Seções de gráficos */
+        .chart-section {
+            margin-bottom: 30px;
+        }
+
+        .chart-section h3 {
+            font-size: 18px;
+            color: #007BFF;
+            margin-bottom: 10px;
+        }
+
+        .chart-section img {
+            display: block;
+            margin: 0 auto;
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background: #f9f9f9;
+        }
+
+        /* Rodapé */
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #555;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <p>MINISTÉRIO DA EDUCAÇÃO<br>
+           UNIVERSIDADE FEDERAL DO PIAUÍ<br>
+           CAMPUS AMÍLCAR FERREIRA SOBRAL - CAFS<br>
+           COORDENAÇÃO ADMINISTRATIVA FINANCEIRA - CAF
+        </p>
+        <h2>Relatório da Área Administrativa</h2>
+    </div>
+
+    <div class="chart-section">
+        <h3>Gráfico Geral de Demandas</h3>
+        <img src="data:image/png;base64,{{ geral_chart }}" alt="Gráfico Geral de Demandas">
+    </div>
+
+    <div class="chart-section">
+        <h3>Gráfico de Demandas por Setor</h3>
+        <img src="data:image/png;base64,{{ setor_chart }}" alt="Gráfico de Demandas por Setor">
+    </div>
+
+    <div class="chart-section">
+        <h3>Ordens de Serviço por Setor ao Longo dos Meses</h3>
+        <img src="data:image/png;base64,{{ ordens_setor_chart }}" alt="Ordens de Serviço por Setor ao Longo dos Meses">
+    </div>
+
+    <div class="chart-section">
+        <h3>Ordens de Serviço ao Longo dos Meses</h3>
+        <img src="data:image/png;base64,{{ ordens_mes_chart }}" alt="Ordens de Serviço ao Longo dos Meses">
+    </div>        
+
+    <div class="footer">
+        <p>© {{ current_year }} Universidade Federal do Piauí. Todos os direitos reservados.</p>
+    </div>
+</body>
+</html>
