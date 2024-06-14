@@ -64,10 +64,35 @@
                     {% endif %}
 
                     {% if can_view_deletar_os %}
-                    <a href="{% url 'deletar_os' os.id_ordem_servico %}" class="link-dark">
-                        <button class="btn btn-danger">Excluir <i class="fa-solid fa-trash"></i></i></button>
+                    <a>
+                        <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deletar{{ os.id_ordem_servico }}">Excluir <i class="fa-solid fa-trash"></i></i></button>
                     </a>
                     {% endif %}
+
+                     <!-- Modal -->
+                     <div class="modal fade" id="deletar{{ os.id_ordem_servico }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="aaa">Excluir ordem de serviço</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Tem certeza que deseja excluir a {{ os.numero_ordem_servico }}?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+
+                                    <!-- formulário para enviar a solicitação de exclusão -->
+                                    <form method="post" action="{% url 'deletar_os' os.id_ordem_servico %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger">Deletar</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>            
 
