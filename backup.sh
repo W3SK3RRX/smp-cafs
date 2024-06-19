@@ -7,4 +7,4 @@ BACKUP_DIR="/home/suporte/Documentos/smp-cafs/backups"
 BACKUP_FILE="backup_$(date +%Y-%m-%d_%H-%M-%S).sql"
 
 # Executa o backup usando pg_dump
-docker exec -t db pg_dump -U setorT setorT > "$BACKUP_DIR/$BACKUP_FILE"
+docker exec -t db pg_dump -U smpcafs smpcafs > "$BACKUP_DIR/$BACKUP_FILE"
